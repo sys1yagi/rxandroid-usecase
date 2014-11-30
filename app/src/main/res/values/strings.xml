@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RxAndroid</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_simple_network_access">SimpleNetworkAccessActivity</string>
+    <string name="title_activity_form_validation">FormValidationActivity</string>
+
+</resources>
