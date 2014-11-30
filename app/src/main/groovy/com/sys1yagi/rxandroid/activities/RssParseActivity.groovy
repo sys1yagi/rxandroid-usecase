@@ -30,12 +30,12 @@ import rx.schedulers.Schedulers
 import java.util.concurrent.Future
 
 @CompileStatic
-public class SimpleNetworkAccessActivity extends ActionBarActivity {
+public class RssParseActivity extends ActionBarActivity {
 
     public static final String ARGS_URL = "url"
 
     public static Intent createIntent(Context context, String url) {
-        Intent intent = new Intent(context, SimpleNetworkAccessActivity.class)
+        Intent intent = new Intent(context, RssParseActivity.class)
 
         intent.putExtra(ARGS_URL, url)
 

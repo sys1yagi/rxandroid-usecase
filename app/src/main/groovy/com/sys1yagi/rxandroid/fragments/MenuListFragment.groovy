@@ -1,6 +1,6 @@
 package com.sys1yagi.rxandroid
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.Nullable
@@ -39,9 +39,9 @@ class MenuListFragment extends Fragment {
         listView.setAdapter(adapter)
 
         Observable.from(
-                "Simple network access",
+                "Rss Parse",
                 "Form validation 1"
-                )
+        )
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ item ->
@@ -49,21 +49,24 @@ class MenuListFragment extends Fragment {
         });
         ViewObservable.itemClicks(listView).subscribe({ OnItemClickEvent event ->
             int position = event.position
-            startActivity(activities[position](getActivity()) as Intent)
+            actions[position].call(getActivity())
         })
 
         return view
     }
 
-    def Closure<Intent>[] activities = [
+    def Closure<Void>[] actions = [
             {
-                Context context ->
-                    SimpleNetworkAccessActivity.createIntent(context,
+                Activity activity ->
+                    Intent intent = RssParseActivity.createIntent(activity,
                             "http://rss.dailynews.yahoo.co.jp/fc/computer/rss.xml")
+                    activity.startActivity(intent)
+
             },
             {
-                Context context ->
-                    FormValidationActivity.createIntent(context)
+                Activity activity ->
+                    Intent intent = FormValidationActivity.createIntent(activity)
+                    activity.startActivity(intent)
             }
     ]
 }

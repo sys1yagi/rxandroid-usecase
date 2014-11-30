@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.sys1yagi.rxandroid.SimpleNetworkAccessActivity"
+            android:name=".RssParseActivity"
             android:label="@string/title_activity_simple_network_access" />
         <activity
             android:name=".activities.FormValidationActivity"

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.sys1yagi.rxandroid.SimpleNetworkAccessActivity">
+    tools:context="com.sys1yagi.rxandroid.RssParseActivity">
 
     <include layout="@layout/toolbar" />
 
