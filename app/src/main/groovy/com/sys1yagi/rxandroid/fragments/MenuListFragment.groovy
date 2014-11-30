@@ -13,6 +13,7 @@ import android.widget.ListView
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import com.sys1yagi.rxandroid.activities.FormValidationActivity
+import com.sys1yagi.rxandroid.activities.SimpleNetworkAccessActivity
 import groovy.transform.CompileStatic
 import rx.Observable
 import rx.android.events.OnItemClickEvent
@@ -39,6 +40,7 @@ class MenuListFragment extends Fragment {
         listView.setAdapter(adapter)
 
         Observable.from(
+                "Simple Network Access in Activity",
                 "Rss Parse in Activity",
                 "Form validation 1 in Activity"
         )
@@ -56,6 +58,13 @@ class MenuListFragment extends Fragment {
     }
 
     def Closure<Void>[] actions = [
+            {
+                Activity activity ->
+                    Intent intent = SimpleNetworkAccessActivity.createIntent(activity,
+                            "https://android-arsenal.com/details/1/1170")
+                    activity.startActivity(intent)
+
+            },
             {
                 Activity activity ->
                     Intent intent = RssParseActivity.createIntent(activity,

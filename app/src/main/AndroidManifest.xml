@@ -11,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.sys1yagi.rxandroid.activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,11 +20,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RssParseActivity"
+            android:name="com.sys1yagi.rxandroid.RssParseActivity"
             android:label="@string/title_activity_simple_network_access" />
         <activity
-            android:name=".activities.FormValidationActivity"
+            android:name="com.sys1yagi.rxandroid.activities.FormValidationActivity"
             android:label="@string/title_activity_form_validation" >
+        </activity>
+        <activity
+            android:name=".activities.SimpleNetworkAccessActivity"
+            android:label="@string/title_activity_simple_network_access" >
         </activity>
     </application>
 
