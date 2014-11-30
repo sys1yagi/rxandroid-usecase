@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.ActionBarActivity
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -15,23 +14,27 @@ import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.Response
+import groovy.transform.CompileStatic
 import org.apache.http.HttpStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import rx.Observable
 import rx.Subscriber
 import rx.android.observables.AndroidObservable
 import rx.android.schedulers.AndroidSchedulers
+import rx.functions.Func1
 import rx.schedulers.Schedulers
 
 import java.util.concurrent.Future
 
+@CompileStatic
 public class SimpleNetworkAccessActivity extends ActionBarActivity {
 
     public static final String ARGS_URL = "url"
 
-    def static Intent createIntent(Context context, String url) {
+    public static Intent createIntent(Context context, String url) {
         Intent intent = new Intent(context, SimpleNetworkAccessActivity.class)
 
         intent.putExtra(ARGS_URL, url)
@@ -61,7 +64,7 @@ public class SimpleNetworkAccessActivity extends ActionBarActivity {
         setSupportActionBar(toolbar)
         url = getIntent().getStringExtra(ARGS_URL)
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         listView.setAdapter(adapter)
 
         AndroidObservable.bindActivity(this,
@@ -70,10 +73,11 @@ public class SimpleNetworkAccessActivity extends ActionBarActivity {
                         .observeOn(AndroidSchedulers.mainThread())
         ).map({ String xml ->
             Document document = Jsoup.parse(xml, "", Parser.xmlParser())
-            document.select("item").collect({ child ->
+            document.select("item").collect({ Element child ->
                 child.select("title").first().text()
             })
-        }).subscribe(
+        } as Func1<String, List<String>>)
+        .subscribe(
                 { List<String> titles ->
                     progressBar.setVisibility(View.GONE)
                     listView.setVisibility(View.VISIBLE)
@@ -86,7 +90,7 @@ public class SimpleNetworkAccessActivity extends ActionBarActivity {
                 })
     }
 
-    def httpLoader(String url) {
+    def static Observable.OnSubscribe<String> httpLoader(String url) {
         return { Subscriber<String> subscriber ->
             AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
             Future<Response> future = asyncHttpClient.prepareGet(url).execute();
@@ -97,7 +101,7 @@ public class SimpleNetworkAccessActivity extends ActionBarActivity {
                 subscriber.onError(new Exception(response.getStatusText()))
             }
             subscriber.onCompleted()
-        }
+        } as Observable.OnSubscribe<String>
     }
 
 }
