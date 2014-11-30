@@ -39,8 +39,8 @@ class MenuListFragment extends Fragment {
         listView.setAdapter(adapter)
 
         Observable.from(
-                "Rss Parse",
-                "Form validation 1"
+                "Rss Parse in Activity",
+                "Form validation 1 in Activity"
         )
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,7 +59,7 @@ class MenuListFragment extends Fragment {
             {
                 Activity activity ->
                     Intent intent = RssParseActivity.createIntent(activity,
-                            "http://rss.dailynews.yahoo.co.jp/fc/computer/rss.xml")
+                            "http://feeds.feedburner.com/Android_Arsenal")
                     activity.startActivity(intent)
 
             },

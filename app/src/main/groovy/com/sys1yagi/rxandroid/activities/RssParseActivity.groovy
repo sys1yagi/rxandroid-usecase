@@ -12,22 +12,17 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
-import com.ning.http.client.AsyncHttpClient
-import com.ning.http.client.Response
+import com.sys1yagi.rxandroid.observables.HttpRequestObservable
 import groovy.transform.CompileStatic
-import org.apache.http.HttpStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
 import rx.Observable
-import rx.Subscriber
 import rx.android.observables.AndroidObservable
 import rx.android.schedulers.AndroidSchedulers
 import rx.functions.Func1
 import rx.schedulers.Schedulers
-
-import java.util.concurrent.Future
 
 @CompileStatic
 public class RssParseActivity extends ActionBarActivity {
@@ -59,7 +54,7 @@ public class RssParseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_simple_network_access)
+        setContentView(R.layout.activity_rss_parse)
         SwissKnife.inject(this)
         setSupportActionBar(toolbar)
         url = getIntent().getStringExtra(ARGS_URL)
@@ -68,7 +63,7 @@ public class RssParseActivity extends ActionBarActivity {
         listView.setAdapter(adapter)
 
         AndroidObservable.bindActivity(this,
-                Observable.create(httpLoader(url))
+                Observable.create(HttpRequestObservable.get(url))
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
         ).map({ String xml ->
@@ -89,19 +84,4 @@ public class RssParseActivity extends ActionBarActivity {
                     errorText.setText(error.getMessage())
                 })
     }
-
-    def static Observable.OnSubscribe<String> httpLoader(String url) {
-        return { Subscriber<String> subscriber ->
-            AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-            Future<Response> future = asyncHttpClient.prepareGet(url).execute();
-            Response response = future.get()
-            if (response.getStatusCode() == HttpStatus.SC_OK) {
-                subscriber.onNext(response.responseBody)
-            } else {
-                subscriber.onError(new Exception(response.getStatusText()))
-            }
-            subscriber.onCompleted()
-        } as Observable.OnSubscribe<String>
-    }
-
 }
