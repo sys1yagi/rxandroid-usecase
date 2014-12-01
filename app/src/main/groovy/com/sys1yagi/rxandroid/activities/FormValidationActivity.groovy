@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.ActionBarActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.util.Log
-import android.util.Pair
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -59,7 +57,7 @@ public class FormValidationActivity extends ActionBarActivity {
                     if (TextUtils.isEmpty(email)) {
                         emailError.setText("*Enter your e-mail address.")
                         emailError.setVisibility(View.VISIBLE)
-                        return null
+                        return false
                     }
                     emailError.setVisibility(View.GONE)
                     return true

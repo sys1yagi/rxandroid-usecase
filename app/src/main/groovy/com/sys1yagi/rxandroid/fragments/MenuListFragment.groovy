@@ -32,17 +32,22 @@ class MenuListFragment extends Fragment {
 
     @Override
     View onCreateView(LayoutInflater inflater,
-                      @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_menulist, null)
         SwissKnife.inject(this, view)
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1);
         listView.setAdapter(adapter)
 
         Observable.from(
                 "Simple Network Access in Activity",
                 "Rss Parse in Activity",
-                "Form validation 1 in Activity"
+                "Form validation 1 in Activity",
+                //"Form validation 2 in Activity",
+                //"ListView paging",
+                //"View Binding",
+                //"xxx in Fragment"
         )
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(AndroidSchedulers.mainThread())
