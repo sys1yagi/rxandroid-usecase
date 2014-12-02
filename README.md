@@ -19,7 +19,89 @@ Will change rapidly...
 
 ## Form Validation
 
-TODO
+
+### require
+
+emailとpasswordを入力するフォームがある。submitボタンを押した時、それぞれのフォームの空チェックを行い、エラーの場合送信を中止し、エラー表示を行う。
+
+![](./art/form_validation.png)
+
+### implement
+
+```groovy
+@InjectView(R.id.edit_email)
+EditText email;
+
+@InjectView(R.id.text_email_error)
+TextView emailError;
+
+@InjectView(R.id.edit_password)
+EditText password;
+
+@InjectView(R.id.text_password_error)
+TextView passwordError;
+
+@InjectView(R.id.buttom_submit)
+Button submit;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_form_validation);
+  SwissKnife.inject(this)
+  ViewObservable.clicks(submit)
+          .map(
+          { event ->
+            return validateEmpty(email,
+                hideError(emailError),
+                showError(emailError, "*Enter your e-mail address.")
+            )
+          })
+          .map(
+          { Boolean isValid ->
+            return validateEmpty(password,
+                hideError(passwordError),
+                showError(passwordError, "*Enter your password")
+            ) && isValid
+          })
+          .filter(
+          { Boolean isValid ->
+            isValid
+          })
+          .subscribe(
+          { Boolean isValid ->
+            //do submit
+          })
+}
+```
+
+validation method and closures.
+
+```groovy
+def static Closure<Void> hideError(TextView errorView) {
+  return {
+    errorView.setVisibility(View.GONE)
+  }
+}
+
+def static Closure<Void> showError(TextView errorView, String message) {
+  return {
+    errorView.setText(message)
+    errorView.setVisibility(View.VISIBLE)
+  }
+}
+
+def static boolean validateEmpty(EditText editText, Closure hideError, Closure showError) {
+  String text = editText.getText().toString()
+  if (TextUtils.isEmpty(text)) {
+    showError.call()
+    return false
+  }
+  hideError.call()
+  return true
+}
+```
+
 
 ## Simple Network Access
 
