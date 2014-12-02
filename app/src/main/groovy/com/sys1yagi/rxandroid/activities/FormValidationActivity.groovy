@@ -42,6 +42,29 @@ public class FormValidationActivity extends ActionBarActivity {
     @InjectView(R.id.buttom_submit)
     Button submit;
 
+    def static Closure<Void> hideError(TextView errorView) {
+        return {
+            errorView.setVisibility(View.GONE)
+        }
+    }
+
+    def static Closure<Void> showError(TextView errorView, String message) {
+        return {
+            errorView.setText(message)
+            errorView.setVisibility(View.VISIBLE)
+        }
+    }
+
+    def static Boolean validateEmpty(EditText editText, Closure hideError, Closure showError) {
+        String text = editText.getText().toString()
+        if (TextUtils.isEmpty(text)) {
+            showError.call()
+            return false
+        }
+        hideError.call()
+        return true
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,25 +76,17 @@ public class FormValidationActivity extends ActionBarActivity {
                 .clicks(submit)
                 .map(
                 { event ->
-                    String email = email.getText().toString()
-                    if (TextUtils.isEmpty(email)) {
-                        emailError.setText("*Enter your e-mail address.")
-                        emailError.setVisibility(View.VISIBLE)
-                        return false
-                    }
-                    emailError.setVisibility(View.GONE)
-                    return true
+                    return validateEmpty(email,
+                            hideError(emailError),
+                            showError(emailError, "*Enter your e-mail address.")
+                    )
                 })
                 .map(
                 { Boolean isValid ->
-                    String password = password.getText().toString()
-                    if (TextUtils.isEmpty(password)) {
-                        passwordError.setText("*Enter your password.")
-                        passwordError.setVisibility(View.VISIBLE)
-                        return false
-                    }
-                    passwordError.setVisibility(View.GONE)
-                    return isValid && true
+                    return isValid && validateEmpty(password,
+                            hideError(passwordError),
+                            showError(passwordError, "*Enter your password")
+                    )
                 })
                 .filter(
                 { Boolean isValid ->
