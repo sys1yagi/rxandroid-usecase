@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -14,6 +15,8 @@ import android.widget.Toast
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import com.sys1yagi.rxandroid.R
+import com.sys1yagi.rxandroid.events.OnEditorActionEvent
+import com.sys1yagi.rxandroid.observables.EditTextObservable
 import groovy.transform.CompileStatic
 import rx.android.observables.ViewObservable
 
@@ -55,7 +58,7 @@ public class FormValidationActivity extends ActionBarActivity {
         }
     }
 
-    def static Boolean validateEmpty(EditText editText, Closure hideError, Closure showError) {
+    def static boolean validateEmpty(EditText editText, Closure hideError, Closure showError) {
         String text = editText.getText().toString()
         if (TextUtils.isEmpty(text)) {
             showError.call()
@@ -72,6 +75,14 @@ public class FormValidationActivity extends ActionBarActivity {
         SwissKnife.inject(this)
         setSupportActionBar(toolbar)
 
+        //It's implemented own.
+        EditTextObservable.editorAction(password).subscribe({ OnEditorActionEvent event ->
+            if (event.actionId == EditorInfo.IME_ACTION_DONE) {
+                submit.performClick()
+            }
+        })
+
+        //It's RxAndroid component.
         ViewObservable
                 .clicks(submit)
                 .map(
@@ -83,10 +94,10 @@ public class FormValidationActivity extends ActionBarActivity {
                 })
                 .map(
                 { Boolean isValid ->
-                    return isValid && validateEmpty(password,
+                    return validateEmpty(password,
                             hideError(passwordError),
                             showError(passwordError, "*Enter your password")
-                    )
+                    ) && isValid
                 })
                 .filter(
                 { Boolean isValid ->
