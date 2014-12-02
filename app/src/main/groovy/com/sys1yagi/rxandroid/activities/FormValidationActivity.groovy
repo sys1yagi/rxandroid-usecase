@@ -3,8 +3,6 @@ package com.sys1yagi.rxandroid.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.ActionBarActivity
-import android.support.v7.widget.Toolbar
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -12,7 +10,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
 import com.sys1yagi.rxandroid.R
 import com.sys1yagi.rxandroid.events.OnEditorActionEvent
@@ -21,14 +18,11 @@ import groovy.transform.CompileStatic
 import rx.android.observables.ViewObservable
 
 @CompileStatic
-public class FormValidationActivity extends ActionBarActivity {
+public class FormValidationActivity extends ToolbarActivity {
 
     def static Intent createIntent(Context context) {
         new Intent(context, FormValidationActivity.class)
     }
-
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar
 
     @InjectView(R.id.edit_email)
     EditText email;
@@ -72,9 +66,6 @@ public class FormValidationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_validation);
-        SwissKnife.inject(this)
-        setSupportActionBar(toolbar)
-
         //It's implemented own.
         EditTextObservable.editorAction(password).subscribe({ OnEditorActionEvent event ->
             if (event.actionId == EditorInfo.IME_ACTION_DONE) {

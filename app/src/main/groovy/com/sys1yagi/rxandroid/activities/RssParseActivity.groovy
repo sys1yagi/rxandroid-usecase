@@ -3,15 +3,13 @@ package com.sys1yagi.rxandroid
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.ActionBarActivity
-import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
-import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
+import com.sys1yagi.rxandroid.activities.ToolbarActivity
 import com.sys1yagi.rxandroid.observables.HttpRequestObservable
 import groovy.transform.CompileStatic
 import org.jsoup.Jsoup
@@ -25,7 +23,7 @@ import rx.functions.Func1
 import rx.schedulers.Schedulers
 
 @CompileStatic
-public class RssParseActivity extends ActionBarActivity {
+public class RssParseActivity extends ToolbarActivity {
 
     public static final String ARGS_URL = "url"
 
@@ -36,9 +34,6 @@ public class RssParseActivity extends ActionBarActivity {
 
         return intent
     }
-
-    @InjectView(R.id.toolbar)
-    Toolbar toolbar
 
     @InjectView(R.id.list_view)
     ListView listView
@@ -55,11 +50,10 @@ public class RssParseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rss_parse)
-        SwissKnife.inject(this)
-        setSupportActionBar(toolbar)
         url = getIntent().getStringExtra(ARGS_URL)
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1);
         listView.setAdapter(adapter)
 
         AndroidObservable.bindActivity(this,
@@ -72,7 +66,7 @@ public class RssParseActivity extends ActionBarActivity {
                 child.select("title").first().text()
             })
         } as Func1<String, List<String>>)
-        .subscribe(
+                .subscribe(
                 { List<String> titles ->
                     progressBar.setVisibility(View.GONE)
                     listView.setVisibility(View.VISIBLE)
