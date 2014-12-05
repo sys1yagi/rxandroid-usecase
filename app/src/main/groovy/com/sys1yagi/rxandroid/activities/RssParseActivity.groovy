@@ -52,8 +52,11 @@ public class RssParseActivity extends ToolbarActivity {
         setContentView(R.layout.activity_rss_parse)
         url = getIntent().getStringExtra(ARGS_URL)
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                android.R.id.text1,
+                new String[0]);
         listView.setAdapter(adapter)
 
         AndroidObservable.bindActivity(this,
