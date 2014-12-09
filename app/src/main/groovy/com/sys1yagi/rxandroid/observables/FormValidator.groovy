@@ -8,7 +8,7 @@ import rx.Subscriber
 import rx.functions.Action0
 
 @CompileStatic
-class EmptyValidator {
+class FormValidator {
 
     def static Observable<Boolean> notEmpty(TextView textView) {
         return notEmpty(textView, null, null)

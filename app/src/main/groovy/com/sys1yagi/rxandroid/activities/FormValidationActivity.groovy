@@ -13,7 +13,7 @@ import com.arasthel.swissknife.annotations.InjectView
 import com.sys1yagi.rxandroid.R
 import com.sys1yagi.rxandroid.events.OnEditorActionEvent
 import com.sys1yagi.rxandroid.observables.EditTextObservable
-import com.sys1yagi.rxandroid.observables.EmptyValidator
+import com.sys1yagi.rxandroid.observables.FormValidator
 import groovy.transform.CompileStatic
 import rx.Observable
 import rx.android.observables.ViewObservable
@@ -87,12 +87,12 @@ public class FormValidationActivity extends ToolbarActivity {
     }
 
     def Observable<Boolean> prepareValidation() {
-        Observable<Boolean> emailEmptyValidator = EmptyValidator
+        Observable<Boolean> emailEmptyValidator = FormValidator
                 .notEmpty(email,
                 hideError(emailError),
                 showError(emailError, "*Enter your e-mail address."))
 
-        Observable<Boolean> passwordEmptyValidator = EmptyValidator
+        Observable<Boolean> passwordEmptyValidator = FormValidator
                 .notEmpty(password,
                 hideError(passwordError),
                 showError(passwordError, "*Enter your password address."))
