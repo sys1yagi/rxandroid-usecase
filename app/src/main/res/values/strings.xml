@@ -6,5 +6,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_simple_network_access">SimpleNetworkAccessActivity</string>
     <string name="title_activity_form_validation">FormValidationActivity</string>
+    <string name="title_activity_form_validation2">FormValidation2Activity</string>
 
 </resources>

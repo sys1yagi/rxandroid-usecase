@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import com.arasthel.swissknife.SwissKnife
 import com.arasthel.swissknife.annotations.InjectView
+import com.sys1yagi.rxandroid.activities.FormValidation2Activity
 import com.sys1yagi.rxandroid.activities.FormValidationActivity
 import com.sys1yagi.rxandroid.activities.SimpleNetworkAccessActivity
 import groovy.transform.CompileStatic
@@ -44,7 +45,7 @@ class MenuListFragment extends Fragment {
                 "Simple Network Access in Activity",
                 "Rss Parse in Activity",
                 "Form validation 1 in Activity",
-                //"Form validation 2 in Activity",
+                "Form validation 2 in Activity",
                 //"ListView paging",
                 //"View Binding",
                 //"xxx in Fragment"
@@ -80,6 +81,11 @@ class MenuListFragment extends Fragment {
             {
                 Activity activity ->
                     Intent intent = FormValidationActivity.createIntent(activity)
+                    activity.startActivity(intent)
+            },
+            {
+                Activity activity ->
+                    Intent intent = FormValidation2Activity.createIntent(activity)
                     activity.startActivity(intent)
             }
     ]
