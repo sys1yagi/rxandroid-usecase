@@ -28,6 +28,37 @@ emailとpasswordを入力するフォームがある。submitボタンを押し�
 
 ### implement
 
+まずは空チェックをして結果を返すObservableを生成するクラスを作る。
+`notEmpty()`はsubscribeされた時に、指定したTextViewが`empty`だとfalse, `!empty`だとtrueを送出するObservable。 success, failureを引数に受け取っているが、これは個別のバリデーション結果に対してアクションを起こしたい場合に指定する。
+
+```groovy
+@CompileStatic
+class EmptyValidator {
+
+  def static Observable<Boolean> notEmpty(TextView textView, 
+      Action0 success,
+      Action0 failure) {
+    return rx.Observable.create({ Subscriber<? super Boolean> subscriber ->
+      if (TextUtils.isEmpty(textView.getText())) {
+        if (failure != null) {
+          failure.call()
+        }
+        subscriber.onNext(false)
+      } else {
+        if (success != null) {
+          success.call()
+        }
+        subscriber.onNext(true)
+      }
+      subscriber.onCompleted()
+    } as Observable.OnSubscribe<Boolean>)
+  }
+}
+```
+
+
+use.
+
 ```groovy
 @InjectView(R.id.edit_email)
 EditText email;
@@ -48,36 +79,46 @@ Button submit;
 protected void onCreate(Bundle savedInstanceState) {
   super.onCreate(savedInstanceState);
   setContentView(R.layout.activity_form_validation);
-  SwissKnife.inject(this)
-  ViewObservable.clicks(submit)
-          .map(
-          { event ->
-            return validateEmpty(email,
-                hideError(emailError),
-                showError(emailError, "*Enter your e-mail address.")
-            )
-          })
-          .map(
-          { Boolean isValid ->
-            return validateEmpty(password,
-                hideError(passwordError),
-                showError(passwordError, "*Enter your password")
-            ) && isValid
-          })
-          .filter(
-          { Boolean isValid ->
-            isValid
-          })
-          .subscribe(
-          { Boolean isValid ->
-            //do submit
-          })
+
+  def validators = prepareValidation()
+                .reduce({ a, b -> a && b })
+                .filter({ a -> a })
+
+  ViewObservable  
+      .clicks(submit)
+      .subscribe(
+      { event ->
+        //クリックイベントがくる度に  
+		//validatorsをsubscribeする
+        validators.subscribe({ _ ->
+          submit()
+        })
+      })
+}
+
+def Observable<Boolean> prepareValidation() {
+
+  //emailをvalidationするObservableを作る
+  Observable<Boolean> emailEmptyValidator = EmptyValidator
+      .notEmpty(email,
+      hideError(emailError),
+      showError(emailError, "*Enter your e-mail address."))
+
+  //passwordをvalidationするObservableを作る
+  Observable<Boolean> passwordEmptyValidator = EmptyValidator
+      .notEmpty(password,
+      hideError(passwordError),
+      showError(passwordError, "*Enter your password."))
+
+  //concatで２つのObservableをつなげて返す
+  return Observable.concat(emailEmptyValidator, passwordEmptyValidator)
 }
 ```
 
-validation method and closures.
+closures.
 
-```groovy
+
+```
 def static Closure<Void> hideError(TextView errorView) {
   return {
     errorView.setVisibility(View.GONE)
@@ -90,17 +131,25 @@ def static Closure<Void> showError(TextView errorView, String message) {
     errorView.setVisibility(View.VISIBLE)
   }
 }
-
-def static boolean validateEmpty(EditText editText, Closure hideError, Closure showError) {
-  String text = editText.getText().toString()
-  if (TextUtils.isEmpty(text)) {
-    showError.call()
-    return false
-  }
-  hideError.call()
-  return true
-}
 ```
+
+## Form validation 2
+
+### require
+
+emailとpasswordを入力するフォームがある。emailとpasswordがinvalidな間、submitをdisabledにする。
+validationは以下の通り
+
+__email__
+
+- 空ではない
+
+__password__
+
+- 空ではない
+
+### implement
+
 
 
 ## Simple Network Access
@@ -111,9 +160,6 @@ TODO
 
 TODO
 
-## Form validation 2
-
-TODO
 
 ## ListView paging
 
