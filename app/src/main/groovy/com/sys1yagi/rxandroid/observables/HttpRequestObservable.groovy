@@ -1,24 +1,25 @@
 package com.sys1yagi.rxandroid.observables
 
-import com.ning.http.client.AsyncHttpClient
-import com.ning.http.client.Response
-import org.apache.http.HttpStatus
-import rx.Subscriber
+import com.squareup.okhttp.OkHttpClient
+import com.squareup.okhttp.Request
+import com.squareup.okhttp.Response
 import rx.Observable
-
-import java.util.concurrent.Future
-
+import rx.Subscriber
 
 class HttpRequestObservable {
+
+    static OkHttpClient CLIENT = new OkHttpClient();
+
     def static Observable.OnSubscribe<String> get(String url) {
         return { Subscriber<String> subscriber ->
-            AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-            Future<Response> future = asyncHttpClient.prepareGet(url).execute();
-            Response response = future.get()
-            if (response.getStatusCode() == HttpStatus.SC_OK) {
-                subscriber.onNext(response.responseBody)
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = CLIENT.newCall(request).execute();
+            if (response.successful) {
+                subscriber.onNext(response.body().string())
             } else {
-                subscriber.onError(new Exception(response.getStatusText()))
+                subscriber.onError(new Exception(response.message()))
             }
             subscriber.onCompleted()
         } as Observable.OnSubscribe<String>

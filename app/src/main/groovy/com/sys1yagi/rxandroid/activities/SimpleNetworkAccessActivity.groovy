@@ -46,8 +46,7 @@ public class SimpleNetworkAccessActivity extends ToolbarActivity {
         AndroidObservable.bindActivity(this,
                 rx.Observable.create(HttpRequestObservable.get(url))
                         .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-        )
+                        .observeOn(AndroidSchedulers.mainThread()))
                 .subscribe(
                 { String html ->
                     progressBar.setVisibility(View.GONE)
