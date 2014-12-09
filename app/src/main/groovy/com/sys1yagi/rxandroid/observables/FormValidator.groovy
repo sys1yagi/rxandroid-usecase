@@ -5,6 +5,8 @@ import android.widget.TextView
 import groovy.transform.CompileStatic
 import rx.Observable
 import rx.Subscriber
+import rx.android.events.OnTextChangeEvent
+import rx.android.observables.ViewObservable
 import rx.functions.Action0
 
 @CompileStatic
@@ -31,6 +33,13 @@ class FormValidator {
             }
             subscriber.onCompleted()
         } as Observable.OnSubscribe<Boolean>)
+    }
+
+    def static Observable<Boolean> watchNotEmpty(TextView textView, boolean emitInitialValue) {
+        return ViewObservable.text(textView, emitInitialValue).
+                map({ OnTextChangeEvent event ->
+                    return !TextUtils.isEmpty(event.text)
+                })
     }
 }
 

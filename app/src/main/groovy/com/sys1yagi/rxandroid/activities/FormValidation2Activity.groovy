@@ -3,15 +3,14 @@ package com.sys1yagi.rxandroid.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.arasthel.swissknife.annotations.InjectView
 import com.sys1yagi.rxandroid.R
+import com.sys1yagi.rxandroid.observables.FormValidator
 import groovy.transform.CompileStatic
 import rx.Observable
-import rx.android.events.OnTextChangeEvent
 import rx.android.observables.ViewObservable
 import rx.functions.Func2
 
@@ -36,14 +35,8 @@ public class FormValidation2Activity extends ToolbarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_validation2);
 
-        def emailEmptyObservable = ViewObservable.text(email, true).
-                map({ OnTextChangeEvent event ->
-                    return !TextUtils.isEmpty(event.text)
-                })
-        def passwordEmptyObservable = ViewObservable.text(password, true).
-                map({ OnTextChangeEvent event ->
-                    return !TextUtils.isEmpty(event.text)
-                })
+        def emailEmptyObservable = FormValidator.watchNotEmpty(email, true);
+        def passwordEmptyObservable = FormValidator.watchNotEmpty(password, true);
 
         Observable.combineLatest(emailEmptyObservable, passwordEmptyObservable,
                 { a, b ->

@@ -1,7 +1,7 @@
 rxandroid-usecase
 =================
 
-RxJavaとかRxAndroidよくわからないので、よくある要求に対してRxAndroidを使って実装するとどうなるかを試すリポジトリです。
+RxJavaとかRxAndroidよくわからないので、よくある要求に対してRxAndroidを使って実装するとどうなるかを試すリポジトリです。RxJavaの使い方として正しいコードが書かれているとは限らないのでご注意ください。
 
 I don't understand RxJava or RxAndroid yet. I'll implement typical case of Android, using RxAndroid. (+o+)
 
@@ -154,6 +154,60 @@ __password__
 
 ### implement
 
+FormValidatorに`watchNotEmpty()`を追加する。`ViewObservable.text()`を使って指定したTextView(EditText)の内容の変化を監視する。`map`してOnTextChangeEventのTextViewの中身を空チェックするObservable<Boolean>を返却する。
+
+```groovy
+class FormValidator {
+  //...
+
+  def static Observable<Boolean> watchNotEmpty(TextView textView, boolean emitInitialValue) {
+    return ViewObservable.text(textView, emitInitialValue).
+        map({ OnTextChangeEvent event ->
+          return !TextUtils.isEmpty(event.text)
+        })
+  }
+}
+```
+
+`FormValidator.watchNotEmpty()`を使ってバリデーションを実行するObservable<Boolean>を作成する。`Observable.combineLatest()`を使って２つのObservable<Boolean>を合成する。合成した結果を使って`submit`(Button)のenable/disableをセットする。
+
+```groovy
+@InjectView(R.id.edit_email)
+EditText email;
+
+@InjectView(R.id.edit_password)
+EditText password;
+
+@InjectView(R.id.buttom_submit)
+Button submit;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_form_validation2);
+
+  def emailEmptyObservable = FormValidator.watchNotEmpty(email, true);
+  def passwordEmptyObservable = FormValidator.watchNotEmpty(password, true);
+
+  Observable.combineLatest(emailEmptyObservable, passwordEmptyObservable,
+      { a, b ->
+        return a && b
+      } as Func2)
+      .subscribe(
+      { Boolean isValid ->
+        submit.setEnabled(isValid)
+      })
+
+  ViewObservable
+      .clicks(submit)
+      .subscribe(
+      { _ ->
+        submit()
+      })
+}
+```
+
+`Observable.concat()`ではなく`Observable.combineLatest()`を使っている。concatは渡したObservableがonComplete()を呼び出さないと次のObservableの結果を送出し始めない。combineLatestは指定したObservableの両方の値がonNext()で出揃ったらFunc2が実行される。
 
 
 ## Simple Network Access
