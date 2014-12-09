@@ -15,6 +15,7 @@ Will change rapidly...
 - multidex 1.0.0
 - swissknife 1.1.4
 - greenbot/EventBus 2.4.0
+- retrofit 1.8.0
 
 
 ## Form Validation
@@ -33,7 +34,7 @@ emailとpasswordを入力するフォームがある。submitボタンを押し�
 
 ```groovy
 @CompileStatic
-class EmptyValidator {
+class FormValidator {
 
   def static Observable<Boolean> notEmpty(TextView textView, 
       Action0 success,
@@ -56,8 +57,8 @@ class EmptyValidator {
 }
 ```
 
-
-use.
+`FormValidator`を使ってvalidation対象のEditTextからObservableを作る。それをconcatでつなげる。concatして作ったObservable<Boolean>に`reduce()`と`filter()`をかける。`reduce()`はconcatでつなげたObservable<Boolean>の結果を&して、全てのvalidationが通ったかを表すBooleanを送出する。`filter()`は`reduce()`の結果をそのまま返す。この時falseだったら後続の処理が呼ばれない。
+RxAndroidの`ViewObservable.clicks()`を使ってクリックイベントをもらい、その中でをsubscribeする。subscribeする時に渡すAction1が呼び出される時は全てのvalidtionがtrueで通過している状態になる。
 
 ```groovy
 @InjectView(R.id.edit_email)
@@ -99,13 +100,13 @@ protected void onCreate(Bundle savedInstanceState) {
 def Observable<Boolean> prepareValidation() {
 
   //emailをvalidationするObservableを作る
-  Observable<Boolean> emailEmptyValidator = EmptyValidator
+  Observable<Boolean> emailEmptyValidator = FormValidator
       .notEmpty(email,
       hideError(emailError),
       showError(emailError, "*Enter your e-mail address."))
 
   //passwordをvalidationするObservableを作る
-  Observable<Boolean> passwordEmptyValidator = EmptyValidator
+  Observable<Boolean> passwordEmptyValidator = FormValidator
       .notEmpty(password,
       hideError(passwordError),
       showError(passwordError, "*Enter your password."))
@@ -115,23 +116,26 @@ def Observable<Boolean> prepareValidation() {
 }
 ```
 
-closures.
+補助的なメソッド達。
+Support methods.
 
 
-```
-def static Closure<Void> hideError(TextView errorView) {
+```groovy
+def static Action0 hideError(TextView errorView) {
   return {
     errorView.setVisibility(View.GONE)
-  }
+  } as Action0
 }
 
-def static Closure<Void> showError(TextView errorView, String message) {
+def static Action0 showError(TextView errorView, String message) {
   return {
     errorView.setText(message)
     errorView.setVisibility(View.VISIBLE)
-  }
+  } as Action0
 }
 ```
+
+バリデーションの種類はFormValidatorにメソッドを追加していけばよい。それらをconcatで繋げればいくらでもバリデーションの処理を追加できる。FormValidatorは画面の実装とは独立しているので使いまわせる。
 
 ## Form validation 2
 
