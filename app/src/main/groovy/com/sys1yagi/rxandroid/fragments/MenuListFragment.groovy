@@ -73,8 +73,7 @@ class MenuListFragment extends Fragment {
             },
             {
                 Activity activity ->
-                    Intent intent = RssParseActivity.createIntent(activity,
-                            "http://feeds.feedburner.com/Android_Arsenal")
+                    Intent intent = RssParseActivity.createIntent(activity)
                     activity.startActivity(intent)
 
             },
