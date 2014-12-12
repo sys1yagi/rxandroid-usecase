@@ -44,7 +44,7 @@ public class SimpleNetworkAccessActivity extends ToolbarActivity {
         url = getIntent().getStringExtra(ARGS_URL)
 
         AndroidObservable.bindActivity(this,
-                rx.Observable.create(HttpRequestObservable.get(url))
+                HttpRequestObservable.get(url)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread()))
                 .subscribe(

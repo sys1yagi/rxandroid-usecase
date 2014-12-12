@@ -10,8 +10,8 @@ class HttpRequestObservable {
 
     static OkHttpClient CLIENT = new OkHttpClient();
 
-    def static Observable.OnSubscribe<String> get(String url) {
-        return { Subscriber<String> subscriber ->
+    def static Observable<String> get(String url) {
+        return rx.Observable.create({ Subscriber<String> subscriber ->
             Request request = new Request.Builder()
                     .url(url)
                     .build();
@@ -22,6 +22,6 @@ class HttpRequestObservable {
                 subscriber.onError(new Exception(response.message()))
             }
             subscriber.onCompleted()
-        } as Observable.OnSubscribe<String>
+        } as Observable.OnSubscribe<String>)
     }
 }
