@@ -11,7 +11,7 @@ I don't understand RxJava or RxAndroid yet. I'll implement typical case of Andro
 Will change rapidly...
 
 - Groovy 2.4.0-beta-3
-- rxandroid 0.22.0
+- rxandroid 0.23.0
 - multidex 1.0.0
 - swissknife 1.1.4
 - greenbot/EventBus 2.4.0
@@ -36,7 +36,7 @@ emailとpasswordを入力するフォームがある。submitボタンを押し�
 @CompileStatic
 class FormValidator {
 
-  def static Observable<Boolean> notEmpty(TextView textView, 
+  def static Observable<Boolean> notEmpty(TextView textView,
       Action0 success,
       Action0 failure) {
     return rx.Observable.create({ Subscriber<? super Boolean> subscriber ->
@@ -85,11 +85,11 @@ protected void onCreate(Bundle savedInstanceState) {
                 .reduce({ a, b -> a && b })
                 .filter({ a -> a })
 
-  ViewObservable  
+  ViewObservable
       .clicks(submit)
       .subscribe(
       { event ->
-        //クリックイベントがくる度に  
+        //クリックイベントがくる度に
 		//validatorsをsubscribeする
         validators.subscribe({ _ ->
           submit()
@@ -230,8 +230,8 @@ TODO
 ## RxAndroid in Fragment
 
 TODO
-    
-                
+
+
 
 ## LICENSE
 
