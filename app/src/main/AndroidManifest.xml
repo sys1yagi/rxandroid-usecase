@@ -34,6 +34,10 @@
                 android:name=".activities.SimpleNetworkAccessActivity"
                 android:label="@string/title_activity_simple_network_access">
         </activity>
+        <activity
+                android:name=".activities.ListViewPagingActivity"
+                android:label="@string/title_activity_listview_paging">
+        </activity>
     </application>
 
 </manifest>
